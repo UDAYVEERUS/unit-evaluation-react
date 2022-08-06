@@ -1,42 +1,40 @@
-import { TextField,Button } from '@mui/material'
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../redux/Auth/action'
+import {useDispatch} from 'react-redux'
+import { login } from '../redux/auth/action'
 
 const Login = () => {
     const [email,setEmail] = useState("")
     const [pass,setPass] = useState("")
-    const [token,setToken] = useState("")
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    const handleLogin= (email,password) => {
-        const data={
+    const handleLogin = (email,pass) => {
+        const data = {
             email,
-            password
+            password:pass
         }
-        fetch(`https://reqres.in/api/login`,{
+        fetch('https://reqres.in/api/login',{
             method:"POST",
-            body: JSON.stringify(data),
+            body:JSON.stringify(data),
             headers:{
-                "content-Type" : "application/json"
+                "content-Type":"application/json"
             }
         }).then((res) => res.json())
         .then((res) => {
-          console.log(res)
-          login(res);
-          navigate("/")
+            dispatch(login(res))
+            console.log(res);
+            navigate('/')
         })
-        .catch((err) => console.log(err))
     }
   return (
     <div>
       <h1>Login</h1>
-      <div><TextField value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Email' id="outlined-basic" label="Email" variant="outlined" /></div><br />
-      <div><TextField value={pass} onChange={(e) => setPass(e.target.value)} placeholder='Password' id="outlined-basic" label="Password" variant="outlined" /></div><br />
-      <Button onClick={(() => handleLogin(email,pass))} variant="contained">LOGIN</Button>
+      <input type="text" placeholder='Enter Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input type="text" placeholder='Password' value={pass} onChange={(e) => setPass(e.target.value)}/>
+      <button onClick={() => handleLogin(email,pass)}>LogIn</button>
     </div>
   )
 }
 
-export default Login;
+export default Login
